@@ -8,6 +8,6 @@ function clickHandler() {
 const element = React.createElement('div', {
   id: 'wrapper',
   onclick: clickHandler
-}, [React.createElement('div', { class: 'qiang' }, 'Luke')])
+}, 'Content')
 
 ReactDOM.render(element, document.getElementById('app'))

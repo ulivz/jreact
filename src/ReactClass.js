@@ -5,5 +5,11 @@
  */
 
 export default class ReactClass {
+  render() {
 
+  }
+
+  setState() {
+    this._reactInternalInstance.receiveComponent(null, newState)
+  }
 }

@@ -13,9 +13,9 @@ export function render(element, container) {
   const componentInstance = instantiateReactComponent(element)
   const markup = componentInstance.mountComponent(nextReactRootIndex++)
   container.innerHTML = markup
-  // setTimeout(() => {
-  //   componentInstance.receiveComponent('123')
-  // }, 1000)
+  setTimeout(() => {
+    // componentInstance.receiveComponent({ props: { class: 'app', app: '123' } })
+  }, 1000)
   ReactEvent.emit('mountReady')
 }
 
