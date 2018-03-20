@@ -5,12 +5,13 @@
  */
 
 import ReactElement from './ReactElement'
+import ReactClass from './ReactClass'
+
 
 function createElement(type, config, children) {
   const props = {}
-  const key = config.key || null // Used for efficient update.
-
   config = config || {}
+  const key = config.key || null // Used for efficient update.
 
   for (let [propName, propValue] of Object.entries(config)) {
     if (propName !== 'key') {
@@ -32,6 +33,19 @@ function createElement(type, config, children) {
   return new ReactElement(type, key, props)
 }
 
+
+function createClass(spec) {
+  const Constructor = function (props) {
+    this.props = props;
+    this.state = this.getInitialState ? this.getInitialState() : null;
+  }
+  Constructor.prototype = new ReactClass()
+  Constructor.prototype.constructor = Constructor
+  Object.assign(Constructor.prototype, spec)
+  return Constructor
+}
+
 export default {
-  createElement
+  createElement,
+  createClass
 }

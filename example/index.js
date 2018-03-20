@@ -1,3 +1,4 @@
-// import ReactDOMElementExample from './ReactDOMTextElement.example'
+// import ReactDOMTextComponentExample from './ReactDOMTextComponent.example'
+// import ReactDOMComponentExample from './ReactDOMComponent.example'
 
-import ReactDOMElementExample from './ReactDOMElement.example'
+import ReactCompositeComponentExample from './ReactCompositeComponent.example'

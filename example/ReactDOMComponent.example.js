@@ -5,6 +5,9 @@ function clickHandler() {
   console.log('Clicked')
 }
 
-const element = React.createElement('div', { id: 'wrapper', onclick: clickHandler }, 'click me')
+const element = React.createElement('div', {
+  id: 'wrapper',
+  onclick: clickHandler
+}, [React.createElement('div', { class: 'qiang' }, 'Luke')])
 
 ReactDOM.render(element, document.getElementById('app'))
