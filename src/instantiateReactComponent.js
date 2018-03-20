@@ -5,9 +5,13 @@
  */
 
 import ReactDOMTextComponent from './ReactDOMTextComponent'
+import ReactDOMComponent from './ReactDOMComponent'
 
 export default function instantiateReactComponent(vnode) {
   if (typeof vnode === 'string' || typeof vnode === 'number') {
     return new ReactDOMTextComponent(vnode);
+  }
+  if (typeof vnode === 'object' || typeof vnode.type === 'number') {
+    return new ReactDOMComponent(vnode);
   }
 }

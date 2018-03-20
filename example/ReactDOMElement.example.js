@@ -1,3 +1,10 @@
+import React from '../src/React'
 import ReactDOM from '../src/ReactDOM'
 
-ReactDOM.render('hello world', document.getElementById('app'))
+function clickHandler() {
+  console.log('Clicked')
+}
+
+const element = React.createElement('div', { id: 'wrapper', onclick: clickHandler }, 'click me')
+
+ReactDOM.render(element, document.getElementById('app'))

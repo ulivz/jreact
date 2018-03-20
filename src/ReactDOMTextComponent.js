@@ -12,25 +12,14 @@ export default class ReactDOMTextComponent {
 
   mountComponent(rootID) {
     this._rootNodeID = rootID
-    return `<span data-jid="${rootID}">${this._currentElement}</span>`
+    return `<span data-reactid="${rootID}">${this._currentElement}</span>`
   }
 
   receiveComponent(nextText) {
     const nextStringText = '' + nextText
     if (nextStringText !== this._currentElement) {
-
+      this._currentElement = nextStringText
+      document.querySelector(`[data-reactid='${this._rootNodeID}']`).innerText = nextStringText
     }
-  }
-}
-
-
-ReactDOMTextComponent.prototype.receiveComponent = function (nextText) {
-  var nextStringText = '' + nextText;
-  //跟以前保存的字符串比较
-  if (nextStringText !== this._currentElement) {
-    this._currentElement = nextStringText;
-    //替换整个节点
-    $('[data-reactid="' + this._rootNodeID + '"]').html(this._currentElement);
-
   }
 }
