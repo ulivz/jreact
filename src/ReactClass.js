@@ -5,6 +5,10 @@
  */
 
 export default class ReactClass {
+  constructor(props) {
+    this.props = props
+  }
+
   render() {
 
   }

@@ -7,7 +7,6 @@
 import ReactElement from './ReactElement'
 import ReactClass from './ReactClass'
 
-
 function createElement(type, config, children) {
   const props = {}
   config = config || {}
@@ -45,7 +44,10 @@ function createClass(spec) {
   return Constructor
 }
 
+const Component = ReactClass
+
 export default {
   createElement,
-  createClass
+  createClass,
+  Component
 }

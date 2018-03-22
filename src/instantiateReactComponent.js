@@ -18,13 +18,14 @@ export default function instantiateReactComponent(element) {
   if (typeof element === 'string' || typeof element === 'number') {
     return new ReactDOMTextComponent(element)
   }
-  if (typeof element === 'object' && typeof element.type === 'string') {
+  const { type, props } = element
+  if (typeof element === 'object' && typeof type === 'string') {
     return new ReactDOMComponent(element)
   }
-  if (typeof element === 'object' && typeof element.type === 'function') {
-    if (element instanceof ReactClass) {
+  if (typeof element === 'object' && typeof type === 'function') {
+    if (Object.getPrototypeOf(type) === ReactClass) {
       return new ReactCompositeComponent(element)
     }
-    return new ReactDOMComponent(element.type(element.props))
+    return new ReactDOMComponent(type(props))
   }
 }
