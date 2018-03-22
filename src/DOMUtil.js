@@ -187,3 +187,15 @@ export function trigger(el, eventType, props) {
   event.initEvent(eventType, bubbles, true);
   el.dispatchEvent(event);
 }
+
+export function replaceWith(el, nextEl) {
+  const block = document.createElement('div')
+  block.innerHTML = nextEl
+  el.parentNode.insertBefore(block.childNodes[0], el)
+  el.parentNode.removeChild(el)
+}
+
+export function insertChildAt(parentNode, newNode, index) {
+  const referenceNode = parentNode.childNodes[index]
+  referenceNode ? parentNode.insertBefore(newNode, referenceNode) : parentNode.appendChild(newNode)
+}

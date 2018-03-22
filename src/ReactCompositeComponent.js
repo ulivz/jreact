@@ -5,7 +5,9 @@
  */
 
 import instantiateReactComponent from './instantiateReactComponent'
+import shouldUpdateReactComponent from './shouldUpdateReactComponent'
 import { ReactEvent } from './EventEmitter'
+import { replaceWith } from './DOMUtil'
 
 export default class ReactCompositeComponent {
   constructor(element) {
@@ -38,5 +40,37 @@ export default class ReactCompositeComponent {
     })
 
     return renderedMarkup
+  }
+
+  receiveComponent(nextElement, newState) {
+    this._currentElement = nextElement || this._currentElement
+    const instance = this._instance
+    const nextState = Object.assign(instance.state, newState)
+    const nextProps = this._currentElement.props
+    instance.state = nextState;
+
+    const { shouldComponentUpdate, componentWillUpdate, componentDidUpdate } = instance
+    if (shouldComponentUpdate && (shouldComponentUpdate(nextProps, nextState) === false)) return
+    if (componentWillUpdate) componentWillUpdate(nextProps, nextState)
+
+    const prevComponentInstance = this._renderedComponent
+    const prevRenderedElement = prevComponentInstance._currentElement
+    const nextRenderedElement = this._instance.render()
+
+    // update
+    if (shouldUpdateReactComponent(prevRenderedElement, nextRenderedElement)) {
+      prevComponentInstance.receiveComponent(nextRenderedElement)
+      componentDidUpdate && componentDidUpdate()
+
+      // rerender
+    } else {
+      this._renderedComponent = instantiateReactComponent(nextRenderedElement)
+      const nextMarkup = this._renderedComponent.mountComponent(this._rootNodeID)
+      replaceWith(
+        document.querySelector('[data-reactid="' + this._rootNodeID + '"]'),
+        nextMarkup
+      )
+    }
+
   }
 }

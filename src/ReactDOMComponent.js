@@ -4,8 +4,9 @@
  * Released under the MIT License.
  */
 
-import { delegate, undelegate } from './DOMUtil'
+import { delegate, undelegate, insertChildAt } from './DOMUtil'
 import instantiateReactComponent from './instantiateReactComponent'
+import shouldUpdateReactComponent from './shouldUpdateReactComponent'
 
 const UPATE_TYPES = {
   MOVE_EXISTING: 1,
@@ -111,11 +112,15 @@ export default class ReactDOMComponent {
   }
 
   _diff(diffQueue, nextChildrenElements) {
-    const prevChildren = flattenChildren(this._renderedChildren)
-    const nextChildren = generateComponentChildren(prevChildren, nextChildrenElements)
+    const prevChildren = flattenChildren(this._renderedChildren) // { [key: string]: Element }
+    const nextChildren = generateComponentChildren(prevChildren, nextChildrenElements) // { [key: string]: Element }
 
-    this._renderedChildren = nextChildren.slice(0)
-
+    // Use updated children
+    this._renderedChildren = []
+    for (const [, child] of Object.entries(nextChildren)) {
+      this._renderedChildren.push(child)
+    }
+    
     let lastIndex = 0
     let nextIndex = 0
 
@@ -124,7 +129,7 @@ export default class ReactDOMComponent {
       // Same component, need to do move operation.
       if (prevChild === nextChild) {
         prevChild._mountIndex < lastIndex && diffQueue.push({
-          parentId: this._rootNodeID,
+          parentID: this._rootNodeID,
           parentNode: document.querySelector('[data-reactid=' + this._rootNodeID + ']'),
           type: UPATE_TYPES.MOVE_EXISTING,
           fromIndex: prevChild._mountIndex,
@@ -137,7 +142,7 @@ export default class ReactDOMComponent {
       else {
         if (prevChild) {
           diffQueue.push({
-            parentId: this._rootNodeID,
+            parentID: this._rootNodeID,
             parentNode: document.querySelector('[data-reactid=' + this._rootNodeID + ']'),
             type: UPATE_TYPES.REMOVE_NODE,
             fromIndex: prevChild._mountIndex,
@@ -152,7 +157,7 @@ export default class ReactDOMComponent {
         }
 
         diffQueue.push({
-          parentId: this._rootNodeID,
+          parentID: this._rootNodeID,
           parentNode: document.querySelector('[data-reactid=' + this._rootNodeID + ']'),
           type: UPATE_TYPES.INSERT_MARKUP,
           fromIndex: null,
@@ -167,7 +172,7 @@ export default class ReactDOMComponent {
     for (const [name, prevChild] of Object.entries(prevChildren)) {
       if (!(nextChildren && nextChildren.hasOwnProperty(name))) {
         diffQueue.push({
-          parentId: this._rootNodeID,
+          parentID: this._rootNodeID,
           parentNode: document.querySelector('[data-reactid=' + this._rootNodeID + ']'),
           type: UPATE_TYPES.REMOVE_NODE,
           fromIndex: prevChild._mountIndex,
@@ -179,6 +184,42 @@ export default class ReactDOMComponent {
       }
     }
   }
+
+  _patch(updates) {
+    const initialChildren = {}
+    const deleteChildren = []
+
+    for (const { type, fromIndex, parentNode, parentID } of updates) {
+      if (type === UPATE_TYPES.MOVE_EXISTING || type === UPATE_TYPES.REMOVE_NODE) {
+        const updatedChild = parentNode.childNodes[fromIndex]
+
+        initialChildren[parentID] = initialChildren[parentID] || []
+        initialChildren[parentID][fromIndex] = updatedChild // Use 'parentID' as the simple NS.
+
+        deleteChildren.push(updatedChild)
+      }
+    }
+
+    // 1. Remove nodes
+    for (const child of deleteChildren) {
+      child.parentNode.removeChild(child);
+    }
+
+    // 2. Handle updated and new nodes
+    for (const { type, parentNode, parentID, fromIndex, toIndex, markup } of updates) {
+      switch (type) {
+        case UPATE_TYPES.INSERT_MARKUP:
+          insertChildAt(parentNode, markup, toIndex)
+          break;
+        case UPATE_TYPES.MOVE_EXISTING:
+          insertChildAt(parentNode, initialChildren[parentID][fromIndex], toIndex)
+          break;
+        case UPATE_TYPES.REMOVE_NODE:
+          break;
+      }
+    }
+  }
+
 }
 
 
@@ -213,7 +254,7 @@ function generateComponentChildren(prevChildren, nextChildrenElements) {
     const prevChildElement = prevChild && prevChild._currentElement
     const nextChildElement = element
 
-    if (_shouldUpdateReactComponent(prevChildElement, nextChildElement)) {
+    if (shouldUpdateReactComponent(prevChildElement, nextChildElement)) {
       prevChild.receiveComponent(nextChildElement);
       nextChildren[name] = prevChild
     } else {
@@ -223,24 +264,4 @@ function generateComponentChildren(prevChildren, nextChildrenElements) {
   }
 
   return nextChildren;
-}
-
-/**
- *
- * @param {Object} prevElement
- * @param {Object} nextElement
- * @returns {boolean}
- * @private
- */
-function _shouldUpdateReactComponent(prevElement, nextElement) {
-  if (prevElement != null && nextElement != null) {
-    const prevType = typeof prevElement;
-    const nextType = typeof nextElement;
-    if (prevType === 'string' || prevType === 'number') {
-      return nextType === 'string' || nextType === 'number'
-    } else {
-      return nextType === 'object' && prevElement.type === nextElement.type && prevElement.key === nextElement.key
-    }
-  }
-  return false
 }

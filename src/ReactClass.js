@@ -9,7 +9,7 @@ export default class ReactClass {
 
   }
 
-  setState() {
+  setState(newState) {
     this._reactInternalInstance.receiveComponent(null, newState)
   }
 }
