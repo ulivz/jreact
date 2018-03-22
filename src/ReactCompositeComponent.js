@@ -23,6 +23,7 @@ export default class ReactCompositeComponent {
 
     const componentConstructor = type
     const instance = new componentConstructor(props)
+
     this._instance = instance
     instance._reactInternalInstance = this
 

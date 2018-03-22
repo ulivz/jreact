@@ -24,7 +24,7 @@ export default class ReactDOMComponent {
   }
 
   mountComponent(rootID) {
-    this._rootNodeID = rootID;
+    this._rootNodeID = rootID
     const { type, props } = this._currentElement
     const { children = [] } = props
 
@@ -42,7 +42,7 @@ export default class ReactDOMComponent {
       }
 
       if (propValue && propKey != 'children' && !/^on[A-Za-z]/.test(propKey)) {
-        openTag += ' ' + propKey + '=' + propValue;
+        openTag += ' ' + propKey + '=' + propValue
       }
     }
 
@@ -74,7 +74,6 @@ export default class ReactDOMComponent {
   }
 
   _updateDOMProperties(prevProps, nextProps) {
-
     const selector = `[data-reactid="${this._rootNodeID}"]`
 
     for (const [propKey, propValue] of Object.entries(prevProps)) {
@@ -103,11 +102,11 @@ export default class ReactDOMComponent {
 
   _updateDOMChildren(nextChildrenElements) {
     updateDepth++
-    this._diff(diffQueue, nextChildrenElements);
+    this._diff(diffQueue, nextChildrenElements)
     updateDepth--
     if (updateDepth === 0) {
       this._patch(diffQueue)
-      diffQueue = [];
+      diffQueue = []
     }
   }
 
@@ -120,12 +119,12 @@ export default class ReactDOMComponent {
     for (const [, child] of Object.entries(nextChildren)) {
       this._renderedChildren.push(child)
     }
-    
+
     let lastIndex = 0
     let nextIndex = 0
 
     for (const [name, nextChild] of Object.entries(nextChildren)) {
-      const prevChild = prevChildren && prevChildren[name];
+      const prevChild = prevChildren && prevChildren[name]
       // Same component, need to do move operation.
       if (prevChild === nextChild) {
         prevChild._mountIndex < lastIndex && diffQueue.push({
@@ -135,7 +134,7 @@ export default class ReactDOMComponent {
           fromIndex: prevChild._mountIndex,
           toIndex: nextIndex
         })
-        lastIndex = Math.max(prevChild._mountIndex, lastIndex);
+        lastIndex = Math.max(prevChild._mountIndex, lastIndex)
       }
 
       // New node
@@ -150,10 +149,10 @@ export default class ReactDOMComponent {
           })
 
           if (prevChild._rootNodeID) {
-            undelegate(document, '.' + prevChild._rootNodeID);
+            undelegate(document, '.' + prevChild._rootNodeID)
           }
 
-          lastIndex = Math.max(prevChild._mountIndex, lastIndex);
+          lastIndex = Math.max(prevChild._mountIndex, lastIndex)
         }
 
         diffQueue.push({
@@ -165,8 +164,8 @@ export default class ReactDOMComponent {
           markup: nextChild.mountComponent(this._rootNodeID + '.' + name)
         })
       }
-      nextChild._mountIndex = nextIndex;
-      nextIndex++;
+      nextChild._mountIndex = nextIndex
+      nextIndex++
     }
 
     for (const [name, prevChild] of Object.entries(prevChildren)) {
@@ -179,7 +178,7 @@ export default class ReactDOMComponent {
           toIndex: null
         })
         if (prevChild._rootNodeID) {
-          undelegate(document, '.' + prevChild._rootNodeID);
+          undelegate(document, '.' + prevChild._rootNodeID)
         }
       }
     }
@@ -202,7 +201,7 @@ export default class ReactDOMComponent {
 
     // 1. Remove nodes
     for (const child of deleteChildren) {
-      child.parentNode.removeChild(child);
+      child.parentNode.removeChild(child)
     }
 
     // 2. Handle updated and new nodes
@@ -255,7 +254,7 @@ function generateComponentChildren(prevChildren, nextChildrenElements) {
     const nextChildElement = element
 
     if (shouldUpdateReactComponent(prevChildElement, nextChildElement)) {
-      prevChild.receiveComponent(nextChildElement);
+      prevChild.receiveComponent(nextChildElement)
       nextChildren[name] = prevChild
     } else {
       const nextChildInstance = instantiateReactComponent(nextChildElement)
@@ -263,5 +262,5 @@ function generateComponentChildren(prevChildren, nextChildrenElements) {
     }
   }
 
-  return nextChildren;
+  return nextChildren
 }

@@ -7,15 +7,24 @@
 import ReactDOMTextComponent from './ReactDOMTextComponent'
 import ReactDOMComponent from './ReactDOMComponent'
 import ReactCompositeComponent from './ReactCompositeComponent'
+import ReactClass from './ReactClass'
 
-export default function instantiateReactComponent(vnode) {
-  if (typeof vnode === 'string' || typeof vnode === 'number') {
-    return new ReactDOMTextComponent(vnode)
+/**
+ * Unique rentry to instantiate a react component
+ * @param {ReactElement} element
+ * @returns {*}
+ */
+export default function instantiateReactComponent(element) {
+  if (typeof element === 'string' || typeof element === 'number') {
+    return new ReactDOMTextComponent(element)
   }
-  if (typeof vnode === 'object' && typeof vnode.type === 'string') {
-    return new ReactDOMComponent(vnode)
+  if (typeof element === 'object' && typeof element.type === 'string') {
+    return new ReactDOMComponent(element)
   }
-  if (typeof vnode === 'object' && typeof vnode.type === 'function') {
-    return new ReactCompositeComponent(vnode)
+  if (typeof element === 'object' && typeof element.type === 'function') {
+    if (element instanceof ReactClass) {
+      return new ReactCompositeComponent(element)
+    }
+    return new ReactDOMComponent(element.type(element.props))
   }
 }
