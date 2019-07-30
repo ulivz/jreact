@@ -2,7 +2,7 @@
 # jreact
 
 [![NPM version](https://img.shields.io/npm/v/jreact.svg?style=flat)](https://npmjs.com/package/jreact) [![NPM downloads](https://img.shields.io/npm/dm/jreact.svg?style=flat)](https://npmjs.com/package/jreact) [![CircleCI](https://circleci.com/gh/ULIVZ/jreact/tree/master.svg?style=shield)](https://circleci.com/gh/ULIVZ/jreact/tree/master)  [![codecov](https://codecov.io/gh/ULIVZ/jreact/branch/master/graph/badge.svg)](https://codecov.io/gh/ULIVZ/jreact)
- [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/ULIVZ/donate)
+ [![donate](https://img.shields.io/badge/$-donate-ff69b4.svg?maxAge=2592000&style=flat)](https://github.com/ULIVZ/donate) [![Greenkeeper badge](https://badges.greenkeeper.io/ulivz/jreact.svg)](https://greenkeeper.io/)
 
 ## Install
 
